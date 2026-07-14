@@ -3,6 +3,8 @@
 > A production-grade, multi-user SaaS personal finance dashboard built with **Next.js 15**, **Prisma**, **PostgreSQL**, and **TypeScript**.
 > Designed to go beyond a simple CRUD application by focusing on **engineering quality, user experience, performance, and thoughtful product features**.
 
+live deployed link :  https://mini-ledger-dev.vercel.app
+
 ---
 
 ## 📸 Preview
