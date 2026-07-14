@@ -12,11 +12,19 @@ const navItems = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+}
+
+export default function Sidebar({ open, setOpen }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
+    <aside className={cn(
+      "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-background transition-transform duration-300 ease-in-out sm:translate-x-0 sm:flex",
+      open ? "translate-x-0" : "-translate-x-full"
+    )}>
       <div className="flex h-14 items-center border-b px-6 font-semibold tracking-tight">
         <div className="flex items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center">
@@ -33,6 +41,7 @@ export default function Sidebar() {
               <li key={item.name}>
                 <Link
                   href={item.href}
+                  onClick={() => setOpen?.(false)}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:text-primary",
                     isActive ? "bg-muted text-primary" : "text-muted-foreground"

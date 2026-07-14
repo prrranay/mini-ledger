@@ -3,13 +3,17 @@
 import { Search, Menu, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuGroup } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { AddTransactionModal } from "@/components/transactions/add-transaction-modal";
 
-export default function Header() {
+interface HeaderProps {
+  onMenuToggle?: () => void;
+}
+
+export default function Header({ onMenuToggle }: HeaderProps) {
   const { data: session } = useSession();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -27,7 +31,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-4">
-        <Button size="icon" variant="outline" className="sm:hidden">
+        <Button size="icon" variant="outline" className="sm:hidden" onClick={onMenuToggle}>
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle Menu</span>
         </Button>
@@ -51,6 +55,11 @@ export default function Header() {
             <span className="sr-only sm:not-sr-only">Add Transaction</span>
           </Button>
 
+          {/* Mobile version of the plus button */}
+          <Button size="icon" className="sm:hidden rounded-full h-8 w-8" onClick={() => setIsAddModalOpen(true)}>
+            <Plus className="h-4 w-4" />
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger render={
               <Button variant="ghost" size="icon" className="rounded-full" />
@@ -61,7 +70,9 @@ export default function Header() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => window.location.href = "/settings"}>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />

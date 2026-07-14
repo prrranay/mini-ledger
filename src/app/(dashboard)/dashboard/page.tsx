@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Activity, CreditCard, DollarSign, Target, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Activity, CreditCard, DollarSign, Target, TrendingUp, AlertCircle, CheckCircle2, PlusCircle, RefreshCw, Trash2, UserPlus, Settings, Download } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { formatCurrency } from "@/lib/currency";
 import { format } from "date-fns";
@@ -10,6 +10,56 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
+
+function getActivityUI(activity: any) {
+  const action = activity.action;
+  const iconClass = "h-4 w-4";
+
+  switch (action) {
+    case "TRANSACTION_CREATED":
+      return {
+        title: "Added Transaction",
+        icon: <PlusCircle className={`${iconClass} text-emerald-500`} />,
+        bg: "bg-emerald-50 dark:bg-emerald-950/20"
+      };
+    case "TRANSACTION_UPDATED":
+      return {
+        title: "Updated Transaction",
+        icon: <RefreshCw className={`${iconClass} text-blue-500`} />,
+        bg: "bg-blue-50 dark:bg-blue-950/20"
+      };
+    case "TRANSACTION_DELETED":
+      return {
+        title: "Deleted Transaction",
+        icon: <Trash2 className={`${iconClass} text-rose-500`} />,
+        bg: "bg-rose-50 dark:bg-rose-950/20"
+      };
+    case "USER_REGISTERED":
+      return {
+        title: "Account Registered",
+        icon: <UserPlus className={`${iconClass} text-violet-500`} />,
+        bg: "bg-violet-50 dark:bg-violet-950/20"
+      };
+    case "SETTINGS_UPDATED":
+      return {
+        title: "Settings Updated",
+        icon: <Settings className={`${iconClass} text-zinc-500`} />,
+        bg: "bg-zinc-50 dark:bg-zinc-950/20"
+      };
+    case "DATA_EXPORTED":
+      return {
+        title: "Exported Data",
+        icon: <Download className={`${iconClass} text-amber-500`} />,
+        bg: "bg-amber-50 dark:bg-amber-950/20"
+      };
+    default:
+      return {
+        title: action.split("_").map((w: string) => w.charAt(0) + w.slice(1).toLowerCase()).join(" "),
+        icon: <Activity className={`${iconClass} text-zinc-500`} />,
+        bg: "bg-zinc-50 dark:bg-zinc-950/20"
+      };
+  }
+}
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
@@ -27,9 +77,9 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32 w-full" />)}
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Skeleton className="col-span-4 h-[400px]" />
-          <Skeleton className="col-span-3 h-[400px]" />
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+          <Skeleton className="col-span-1 lg:col-span-4 h-[400px]" />
+          <Skeleton className="col-span-1 lg:col-span-3 h-[400px]" />
         </div>
       </div>
     );
@@ -39,7 +89,7 @@ export default function DashboardPage() {
     return <div className="text-destructive">Failed to load dashboard data.</div>;
   }
 
-  const { balance, income, expense, chartData, categoryData, healthScore, insights, recentActivity, recentTransactions } = data;
+  const { balance, income, expense, chartData, categoryData, healthScore, insights, recentActivity } = data;
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -90,8 +140,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
             <CardTitle>Cash Flow</CardTitle>
             <CardDescription>Income vs Expense over time.</CardDescription>
@@ -113,7 +163,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
+        <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
             <CardTitle>Category Distribution</CardTitle>
             <CardDescription>Where your money went.</CardDescription>
@@ -137,8 +187,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
             <CardTitle>Smart Insights</CardTitle>
             <CardDescription>AI-generated insights based on your spending.</CardDescription>
@@ -161,26 +211,32 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
+        <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[300px]">
               <div className="space-y-4 pr-4">
-                {recentActivity.map((activity: any) => (
-                  <div key={activity.id} className="flex items-start justify-between border-b pb-4 last:border-0 last:pb-0">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">{activity.action}</p>
-                      {activity.details && (
-                        <p className="text-xs text-muted-foreground">{activity.details}</p>
-                      )}
+                {recentActivity.map((activity: any) => {
+                  const ui = getActivityUI(activity);
+                  return (
+                    <div key={activity.id} className="flex items-center gap-3 border-b pb-4 last:border-0 last:pb-0">
+                      <div className={`p-2 rounded-full ${ui.bg} shrink-0`}>
+                        {ui.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{ui.title}</p>
+                        {activity.details && (
+                          <p className="text-xs text-muted-foreground truncate">{activity.details}</p>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground shrink-0 ml-2">
+                        {format(new Date(activity.createdAt), "MMM d, h:mm a")}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground shrink-0 ml-4">
-                      {format(new Date(activity.createdAt), "MMM d, h:mm a")}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {recentActivity.length === 0 && (
                   <div className="text-sm text-muted-foreground">No recent activity.</div>
                 )}
