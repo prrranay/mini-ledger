@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/components/pwa-register";
+import { PwaProvider } from "@/providers/pwa-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +22,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <ReactQueryProvider>
-          {children}
-          <Toaster />
-          <PwaRegister />
+          <PwaProvider>
+            {children}
+            <Toaster />
+            <PwaRegister />
+          </PwaProvider>
         </ReactQueryProvider>
       </body>
     </html>

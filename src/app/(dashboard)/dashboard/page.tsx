@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/currency";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PwaInstallBanner } from "@/components/pwa-install-banner";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
 
@@ -93,6 +94,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 w-full">
+      <PwaInstallBanner />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
       </div>

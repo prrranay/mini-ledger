@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Receipt, BarChart3, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { usePwa } from "@/providers/pwa-provider";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -21,7 +21,7 @@ interface SidebarProps {
 
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const pathname = usePathname();
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const { installApp } = usePwa();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -30,31 +30,8 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
-
-    const handleBeforeInstall = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
-
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
-    };
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") {
-        setDeferredPrompt(null);
-      }
-    } else {
-      toast.info("To install: Open your browser menu (e.g. Chrome settings or Safari Share button) and select 'Add to Home screen'.");
-    }
-  };
 
   return (
     <aside className={cn(
@@ -97,7 +74,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             "rounded-lg bg-muted/50 p-4 transition-colors",
             isMobile && "cursor-pointer hover:bg-muted/80"
           )}
-          onClick={isMobile ? handleInstallClick : undefined}
+          onClick={isMobile ? installApp : undefined}
         >
           <h4 className="mb-1 text-sm font-medium">{isMobile ? "Install App" : "Pro Tip"}</h4>
           <p className="text-xs text-muted-foreground">
