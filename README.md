@@ -1,88 +1,530 @@
-# Smart Mini Ledger
+# 💰 Smart Mini Ledger
 
-A production-grade, multi-user SaaS personal finance dashboard designed to track income, expenses, and overall financial health. Built with a focus on performance, minimal UI, and engineering excellence.
+> A production-grade, multi-user SaaS personal finance dashboard built with **Next.js 15**, **Prisma**, **PostgreSQL**, and **TypeScript**.
+> Designed to go beyond a simple CRUD application by focusing on **engineering quality, user experience, performance, and thoughtful product features**.
 
-## Project Overview
+---
 
-Smart Mini Ledger goes beyond a simple CRUD application. It provides users with a comprehensive view of their finances through:
-- **Intelligent Dashboard**: Visualizes cash flow and category distribution using `Recharts`.
-- **Financial Health Score**: An algorithm evaluates your savings rate and expense trends.
-- **Smart Insights**: Generates natural language insights (e.g., "You saved 31% this month").
-- **Activity Log**: Audits all actions taken on the account.
-- **Async Notifications**: Sends emails when new transactions are recorded without blocking the UI.
+## 📸 Preview
 
-## Architecture & Technical Decisions
+* Login
+![alt text](image-2.png)
+* Dashboard
+![alt text](image-1.png)
+* Transactions
+![alt text](image-3.png)
+* Analytics
+![alt text](image-4.png)
+* Settings
+![alt text](image-5.png)
+* PWA Installation
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Database**: PostgreSQL (via Prisma ORM)
-- **Authentication**: Auth.js (NextAuth v5) - Google & Credentials
-- **Styling**: Tailwind CSS v4 & shadcn/ui
-- **State Management**: TanStack Query (React Query)
-- **Validation**: Zod + React Hook Form
+---
 
-### Key Engineering Improvements (Over Standard AI Scaffolding)
-1. **Integer Money Storage**: AI initially proposed `Float` for money. This was corrected to use `Int` (storing cents) to avoid JavaScript floating-point math errors. A dedicated `currency.ts` utility handles conversions to/from UI displays.
-2. **Unified Dashboard API**: Instead of fetching charts, metrics, and activities separately, a unified `/api/dashboard` endpoint calculates everything securely on the server, drastically reducing client-side waterfalls.
-3. **Non-Blocking Emails**: Email notifications via Nodemailer are dispatched asynchronously (`Promise.resolve().then(...)`) so transaction creation remains fast and responsive. Failures are logged gracefully to the Activity table.
-4. **Debounced Querying & Optimistic Updates**: TanStack Query is configured to cache data and automatically invalidate upon successful mutations, yielding a snappy UX.
+# ✨ Features
 
-## Folder Structure
+### 🔐 Authentication
+
+* Google OAuth
+* Email & Password Authentication
+* Protected Routes
+* User-specific data isolation
+* Secure session management
+
+---
+
+### 💳 Transaction Management
+
+* Create Transactions
+* Edit Transactions
+* Delete Transactions
+* Search Transactions
+* Advanced Filters
+* Pagination
+* Optimistic UI Updates
+
+---
+
+### 📊 Dashboard
+
+View your financial overview with:
+
+* Current Balance
+* Total Income
+* Total Expenses
+* Savings
+* Monthly Overview
+* Recent Transactions
+* Recent Activity
+
+---
+
+### 📈 Analytics
+
+Interactive analytics powered by Recharts:
+
+* Income vs Expense
+* Monthly Spending Trend
+* Category Distribution
+* Weekly Expense Overview
+* Spending Timeline
+
+---
+
+### 🧠 Smart Insights Engine *(Unique Feature)*
+
+Instead of static dashboards, Smart Mini Ledger analyzes your transaction history and generates personalized insights such as:
+
+* Highest Spending Category
+* Largest Expense
+* Largest Income
+* Average Daily Spending
+* Average Monthly Spending
+* Weekend vs Weekday Spending
+* Spending Streaks
+* Monthly Spending Prediction
+* Savings Recommendations
+* Spending Trend Analysis
+
+Example insights:
+
+> • You spent **42%** of your expenses on **Food**.
+
+> • Your spending increased **18%** compared to last month.
+
+> • You're projected to spend **₹32,400** this month.
+
+> • Great job! Your savings rate is **31%**.
+
+---
+
+### ❤️ Financial Health Score *(Unique Feature)*
+
+A custom scoring algorithm evaluates your overall financial health using:
+
+* Savings Rate
+* Expense Ratio
+* Spending Consistency
+* Monthly Trends
+* Category Distribution
+
+Example:
 
 ```
-mini-ledger/
-├── prisma/                 # Database schema and migrations
-├── src/
-│   ├── app/                # Next.js App Router
-│   │   ├── (dashboard)/    # Authenticated routes (Dashboard, Transactions, Settings)
-│   │   ├── api/            # API endpoints (auth, dashboard, export, settings, transactions)
-│   │   ├── login/          # Login page
-│   │   └── register/       # Registration page
-│   ├── components/         # Reusable UI components (shadcn, layout, modals)
-│   ├── lib/                # Core utilities (activity, currency, email, insights, prisma)
-│   └── providers/          # React context providers (TanStack Query)
-└── .env                    # Environment variables
+Financial Health Score
+
+86 / 100
+
+Excellent
+
+Recommendations
+
+✓ You're saving consistently.
+
+✓ Food expenses increased 12%.
+
+✓ Projected month-end savings: ₹17,500.
 ```
 
-## Setup & Environment Variables
+---
 
-1. Clone the repository and install dependencies:
-   ```bash
-   npm install
-   ```
+### 📧 Email Notifications
 
-2. Configure your `.env` file (see `.env.example`):
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/miniledger?schema=public"
-   AUTH_SECRET="your_secure_random_secret"
-   SMTP_HOST="smtp.mailtrap.io"
-   SMTP_PORT="2525"
-   SMTP_USER="user"
-   SMTP_PASS="pass"
-   ```
+Receive email notifications whenever a transaction is created.
 
-3. Initialize the database:
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
+Notifications include:
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+* Transaction Type
+* Amount
+* Category
+* Current Balance
 
-## AI Usage
+Email delivery is asynchronous to ensure a fast user experience. Failed deliveries are logged without interrupting transaction creation.
 
-This project was built with the assistance of advanced agentic AI, specifically optimizing boilerplate generation, UI scaffolding (shadcn/ui), and validation logic.
+---
 
-**Where AI was corrected by engineering oversight:**
-- **Floating Point Math**: Corrected to integer cents.
-- **Email Blocking**: Refactored to prevent SMTP latency from affecting the user experience.
-- **Component Reusability**: Extracted scattered logic into centralized `lib/` utilities.
+### 📝 Activity Timeline
 
-## Future Improvements
+Every important action is recorded:
 
-- Add comprehensive CSV Import with robust row validation and error reporting.
-- Implement more granular OAuth providers (GitHub, Apple).
-- Expand financial prediction algorithms.
+* Transaction Created
+* Transaction Updated
+* Transaction Deleted
+* Login
+* Logout
+* Email Notification Sent
+* Email Notification Failed
+
+---
+
+### ⚙️ Settings
+
+Customize your experience:
+
+* Currency Preference
+* Notification Email
+* Income Notifications
+* Expense Notifications
+
+Supported currencies:
+
+* ₹ INR
+* $ USD
+* € EUR
+* £ GBP
+
+---
+
+### 📱 Progressive Web App (PWA)
+
+Install Smart Mini Ledger like a native application.
+
+Features:
+
+* Installable
+* Mobile Friendly
+* Fast Loading
+* Offline Asset Caching
+* Native App Experience
+
+
+---
+
+### ⌨️ Productivity Features
+
+Keyboard shortcuts:
+
+* **Ctrl + K** → Command Palette
+* **N** → New Transaction
+* **Esc** → Close Dialog
+
+---
+
+### 🎨 Production Polish
+
+* Responsive Design
+* Loading Skeletons
+* Empty States
+* Error Boundaries
+* Retry Buttons
+* Toast Notifications
+* Accessible Components
+* Smooth Animations
+* Premium UI using shadcn/ui
+
+---
+
+# 🏗️ Tech Stack
+
+| Category         | Technology              |
+| ---------------- | ----------------------- |
+| Framework        | Next.js 15 (App Router) |
+| Language         | TypeScript              |
+| Database         | PostgreSQL              |
+| ORM              | Prisma                  |
+| Authentication   | Auth.js (NextAuth v5)   |
+| UI               | Tailwind CSS v4         |
+| Components       | shadcn/ui               |
+| Forms            | React Hook Form         |
+| Validation       | Zod                     |
+| Charts           | Recharts                |
+| State Management | TanStack Query          |
+| Notifications    | Nodemailer              |
+| Deployment       | Vercel + PostgreSQL     |
+
+---
+
+# 🏛️ Architecture
+
+```
+Browser
+      │
+      ▼
+ Next.js 15 (App Router)
+      │
+      ├── Server Components
+      ├── Client Components
+      ├── Route Handlers
+      │
+      ▼
+ Prisma ORM
+      │
+      ▼
+ PostgreSQL
+```
+
+---
+
+# 🗄️ Database Structure
+
+```
+User
+ │
+ ├── Transactions
+ │
+ ├── Notification Settings
+ │
+ └── Activity Log
+```
+
+---
+
+# ⚡ Engineering Decisions
+
+This project intentionally goes beyond a standard CRUD application.
+
+Key engineering improvements include:
+
+### Integer-Based Currency Storage
+
+Money is stored using the smallest currency unit instead of floating-point numbers to avoid precision errors.
+
+---
+
+### Unified Dashboard API
+
+A single dashboard endpoint aggregates:
+
+* Summary Cards
+* Charts
+* Activity Timeline
+* Smart Insights
+
+This minimizes client requests and improves performance.
+
+---
+
+### Async Email Processing
+
+Email notifications are dispatched asynchronously.
+
+If SMTP fails:
+
+* Transaction still succeeds.
+* Failure is logged.
+* User experience remains unaffected.
+
+---
+
+### Optimistic UI
+
+Transactions update instantly while the server request runs in the background, creating a smoother experience.
+
+---
+
+### Smart Caching
+
+Dashboard responses are cached and automatically invalidated whenever transactions change.
+
+---
+
+### Feature-Based Architecture
+
+The application is organized by features rather than file types, improving scalability and maintainability.
+
+---
+
+# 🔒 Security
+
+* Protected Routes
+* Session Authentication
+* Password Hashing
+* User Data Isolation
+* Server-side Validation
+* Zod Input Validation
+* Secure Environment Variables
+
+---
+
+# 🚀 Setup
+
+Clone the repository
+
+```bash
+git clone <repository-url>
+
+cd smart-mini-ledger
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Configure environment variables
+
+```env
+DATABASE_URL=
+
+AUTH_SECRET=
+
+AUTH_GOOGLE_ID=
+
+AUTH_GOOGLE_SECRET=
+
+SMTP_HOST=
+
+SMTP_PORT=
+
+SMTP_USER=
+
+SMTP_PASS=
+
+SMTP_FROM=
+```
+
+Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+Run migrations
+
+```bash
+npx prisma migrate dev
+```
+
+Start development server
+
+```bash
+npm run dev
+```
+
+---
+
+# 🌐 Deployment
+
+Frontend:
+
+* Vercel
+
+Database:
+
+* PostgreSQL
+
+Environment Variables:
+
+* DATABASE_URL
+* AUTH_SECRET
+* AUTH_GOOGLE_ID
+* AUTH_GOOGLE_SECRET
+* SMTP_HOST
+* SMTP_PORT
+* SMTP_USER
+* SMTP_PASS
+* SMTP_FROM
+
+---
+
+# 🤖 AI Usage
+
+This project was intentionally built using AI as an engineering accelerator rather than as a replacement for software engineering.
+
+### AI Tools Used
+
+* ChatGPT
+* Cursor AI / Claude Code (AI IDE)
+
+### AI Accelerated
+
+* Initial project scaffolding
+* CRUD boilerplate
+* Form generation
+* UI scaffolding
+* Prisma schema drafts
+* Validation boilerplate
+* Component generation
+
+---
+
+## Where AI Fell Short
+
+Several AI-generated implementations were intentionally refactored and improved:
+
+### Money Representation
+
+AI initially suggested floating-point values for currency.
+
+This was replaced with integer-based currency storage to eliminate precision issues.
+
+---
+
+### Dashboard Architecture
+
+AI generated multiple API requests for analytics.
+
+This was redesigned into a single aggregated dashboard endpoint to reduce network overhead.
+
+---
+
+### Email Notifications
+
+AI generated synchronous email sending.
+
+This was redesigned to execute asynchronously, preventing SMTP latency from impacting user interactions.
+
+---
+
+### Component Structure
+
+AI generated repetitive UI components.
+
+These were refactored into reusable feature-based components and shared utilities.
+
+---
+
+### Validation
+
+AI duplicated validation logic across the application.
+
+Validation was centralized using Zod schemas and shared utility functions.
+
+---
+
+### Performance
+
+AI-generated queries were optimized using server-side aggregation, caching strategies, and efficient data fetching patterns.
+
+---
+
+# 🎯 Why This Project Stands Out
+
+Beyond the assignment requirements, this project includes:
+
+* Multi-user Authentication
+* Financial Health Score
+* Smart Insights Engine
+* Activity Timeline
+* Progressive Web App (PWA)
+* Currency Preferences
+* Async Email Notifications
+* Unified Dashboard API
+* Optimistic UI
+* Feature-Based Architecture
+* Responsive SaaS UI
+* Production-Ready Code Structure
+
+These additions demonstrate engineering decisions focused on scalability, performance, maintainability, and user experience rather than relying solely on AI-generated CRUD functionality.
+
+---
+
+# 🔮 Future Improvements
+
+* CSV Import with row validation
+* Recurring Transactions
+* Budget Planning
+* Goal Tracking
+* AI-powered Spending Assistant
+* Multi-currency Exchange Rates
+* Scheduled Reports
+* Push Notifications
+* Family/Shared Accounts
+* Receipt OCR Integration
+
+---
+
+# 📄 License
+
+This project was developed as a technical assessment and portfolio project demonstrating modern full-stack engineering practices.
