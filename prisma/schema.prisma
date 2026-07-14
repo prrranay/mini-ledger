@@ -91,6 +91,7 @@ model NotificationSettings {
   email         String?
   notifyIncome  Boolean @default(false)
   notifyExpense Boolean @default(false)
+  currency      String  @default("INR")
 
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -19,6 +19,9 @@ export async function GET(req: Request) {
         data: {
           userId: session.user.id,
           email: session.user.email,
+          notifyIncome: true,
+          notifyExpense: true,
+          currency: "INR",
         },
       });
     }
@@ -38,7 +41,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { email, notifyIncome, notifyExpense } = body;
+    const { email, notifyIncome, notifyExpense, currency } = body;
 
     const settings = await prisma.notificationSettings.upsert({
       where: { userId: session.user.id },
@@ -46,12 +49,14 @@ export async function PUT(req: Request) {
         email,
         notifyIncome,
         notifyExpense,
+        currency,
       },
       create: {
         userId: session.user.id,
         email,
         notifyIncome,
         notifyExpense,
+        currency: currency || "INR",
       },
     });
 

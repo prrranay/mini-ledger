@@ -19,6 +19,8 @@ export default function TransactionsPage() {
   const [search, setSearch] = useState("");
   const [type, setType] = useState<string>("ALL");
   const [category, setCategory] = useState<string>("ALL");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
   const queryClient = useQueryClient();
 
   // State for Edit Modal
@@ -30,11 +32,13 @@ export default function TransactionsPage() {
   const [selectedTransactionForDelete, setSelectedTransactionForDelete] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["transactions", search, type, category],
+    queryKey: ["transactions", search, type, category, startDate, endDate],
     queryFn: async () => {
       let url = `/api/transactions?search=${search}`;
       if (type !== "ALL") url += `&type=${type}`;
       if (category !== "ALL") url += `&category=${category}`;
+      if (startDate) url += `&startDate=${startDate}`;
+      if (endDate) url += `&endDate=${endDate}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch transactions");
       return res.json();
@@ -79,7 +83,7 @@ export default function TransactionsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
       </div>
 
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         {/* Search */}
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -92,7 +96,7 @@ export default function TransactionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-wrap gap-3 items-center">
           <Select value={type} onValueChange={(val) => setType(val || "ALL")}>
             <SelectTrigger className="w-[130px]">
               <SelectValue placeholder="Filter type" />
@@ -118,8 +122,29 @@ export default function TransactionsPage() {
             </SelectContent>
           </Select>
 
-          {(type !== "ALL" || category !== "ALL" || search !== "") && (
-            <Button variant="ghost" onClick={() => { setType("ALL"); setCategory("ALL"); setSearch(""); }} size="sm">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">From</span>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-[130px] h-8 text-xs px-2"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">To</span>
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-[130px] h-8 text-xs px-2"
+              />
+            </div>
+          </div>
+
+          {(type !== "ALL" || category !== "ALL" || search !== "" || startDate !== "" || endDate !== "") && (
+            <Button variant="ghost" onClick={() => { setType("ALL"); setCategory("ALL"); setSearch(""); setStartDate(""); setEndDate(""); }} size="sm">
               Clear Filters
             </Button>
           )}
@@ -160,7 +185,7 @@ export default function TransactionsPage() {
                       <Badge variant="outline">{transaction.category}</Badge>
                     </TableCell>
                     <TableCell className={`text-right font-medium ${transaction.type === 'INCOME' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                      {transaction.type === 'INCOME' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                      {transaction.type === 'INCOME' ? '+' : '-'}{formatCurrency(transaction.amount, data?.currency)}
                     </TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button 

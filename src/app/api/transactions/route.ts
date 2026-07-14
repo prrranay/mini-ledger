@@ -18,6 +18,8 @@ export async function GET(req: Request) {
     const search = searchParams.get("search") || "";
     const type = searchParams.get("type");
     const category = searchParams.get("category");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
     const skip = (page - 1) * limit;
 
@@ -25,6 +27,12 @@ export async function GET(req: Request) {
       userId: session.user.id,
       ...(type && { type }),
       ...(category && { category }),
+      ...((startDate || endDate) && {
+        date: {
+          ...(startDate && { gte: new Date(startDate) }),
+          ...(endDate && { lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) }),
+        },
+      }),
     };
 
     if (search) {
@@ -43,10 +51,17 @@ export async function GET(req: Request) {
 
     const total = await prisma.transaction.count({ where });
 
+    const userSettings = await prisma.notificationSettings.findUnique({
+      where: { userId: session.user.id },
+      select: { currency: true },
+    });
+    const currency = userSettings?.currency || "INR";
+
     return NextResponse.json({
       transactions,
       total,
       pages: Math.ceil(total / limit),
+      currency,
     });
   } catch (error) {
     console.error("[TRANSACTIONS_GET]", error);

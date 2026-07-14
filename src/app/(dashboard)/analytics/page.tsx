@@ -41,7 +41,7 @@ export default function AnalyticsPage() {
     return <div className="text-destructive">Failed to load analytics data.</div>;
   }
 
-  const { balance, income, expense, chartData, categoryData, healthScore } = data;
+  const { balance, income, expense, chartData, categoryData, healthScore, currency } = data;
 
   const totalSavings = income - expense;
   const savingsRate = income > 0 ? (totalSavings / income) * 100 : 0;
@@ -59,7 +59,7 @@ export default function AnalyticsPage() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalSavings * 100)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(totalSavings * 100, currency)}</div>
             <p className="text-xs text-muted-foreground mt-1">
               For the last 30 days
             </p>
@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
                 <AreaChart data={chartData}>
                   <XAxis dataKey="date" tickFormatter={(tick) => format(new Date(tick), "MMM d")} />
                   <YAxis />
-                  <Tooltip formatter={(value) => formatCurrency(Number(value) * 100)} labelFormatter={(label) => format(new Date(label), "MMM d, yyyy")} />
+                  <Tooltip formatter={(value) => formatCurrency(Number(value) * 100, currency)} labelFormatter={(label) => format(new Date(label), "MMM d, yyyy")} />
                   <Legend />
                   <Area type="monotone" name="Income" dataKey="income" stroke="#10b981" fill="#10b981" fillOpacity={0.15} />
                   <Area type="monotone" name="Expense" dataKey="expense" stroke="#ef4444" fill="#ef4444" fillOpacity={0.15} />
@@ -137,7 +137,7 @@ export default function AnalyticsPage() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(Number(value) * 100)} />
+                  <Tooltip formatter={(value) => formatCurrency(Number(value) * 100, currency)} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
                     <span className="font-medium">{cat.name.charAt(0) + cat.name.slice(1).toLowerCase()}</span>
                     <div className="space-x-2">
                       <span className="text-muted-foreground">{percentage.toFixed(1)}%</span>
-                      <span className="font-semibold">{formatCurrency(cat.value * 100)}</span>
+                      <span className="font-semibold">{formatCurrency(cat.value * 100, currency)}</span>
                     </div>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">

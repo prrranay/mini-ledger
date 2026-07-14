@@ -89,7 +89,7 @@ export default function DashboardPage() {
     return <div className="text-destructive">Failed to load dashboard data.</div>;
   }
 
-  const { balance, income, expense, chartData, categoryData, healthScore, insights, recentActivity } = data;
+  const { balance, income, expense, chartData, categoryData, healthScore, insights, recentActivity, currency } = data;
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -104,7 +104,7 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(balance * 100)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(balance * 100, currency)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -113,7 +113,7 @@ export default function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-500">+{formatCurrency(income * 100)}</div>
+            <div className="text-2xl font-bold text-emerald-500">+{formatCurrency(income * 100, currency)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -122,7 +122,7 @@ export default function DashboardPage() {
             <CreditCard className="h-4 w-4 text-rose-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-rose-500">-{formatCurrency(expense * 100)}</div>
+            <div className="text-2xl font-bold text-rose-500">-{formatCurrency(expense * 100, currency)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -177,7 +177,7 @@ export default function DashboardPage() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: any) => formatCurrency(Number(value) * 100)} />
+                    <Tooltip formatter={(value: any) => formatCurrency(Number(value) * 100, currency)} />
                   </PieChart>
                 </ResponsiveContainer>
              ) : (

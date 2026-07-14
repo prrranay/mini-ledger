@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Receipt, BarChart3, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -19,6 +21,40 @@ interface SidebarProps {
 
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const pathname = usePathname();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setDeferredPrompt(null);
+      }
+    } else {
+      toast.info("To install: Open your browser menu (e.g. Chrome settings or Safari Share button) and select 'Add to Home screen'.");
+    }
+  };
 
   return (
     <aside className={cn(
@@ -56,10 +92,22 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         </ul>
       </nav>
       <div className="mt-auto border-t p-4">
-        <div className="rounded-lg bg-muted/50 p-4">
-          <h4 className="mb-1 text-sm font-medium">Pro Tip</h4>
+        <div 
+          className={cn(
+            "rounded-lg bg-muted/50 p-4 transition-colors",
+            isMobile && "cursor-pointer hover:bg-muted/80"
+          )}
+          onClick={isMobile ? handleInstallClick : undefined}
+        >
+          <h4 className="mb-1 text-sm font-medium">{isMobile ? "Install App" : "Pro Tip"}</h4>
           <p className="text-xs text-muted-foreground">
-            Press <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">CTRL K</kbd> to open the command menu.
+            {isMobile ? (
+              "Click here to install this app to your homescreen for quick offline access."
+            ) : (
+              <>
+                Press <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">CTRL K</kbd> to open the command menu.
+              </>
+            )}
           </p>
         </div>
       </div>

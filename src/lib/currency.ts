@@ -6,8 +6,8 @@ export function fromCents(cents: number): number {
   return cents / 100;
 }
 
-export function formatCurrency(cents: number, currency: string = "USD"): string {
-  const formatter = new Intl.NumberFormat("en-US", {
+export function formatCurrency(cents: number, currency: string = "INR"): string {
+  const formatter = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency,
   });

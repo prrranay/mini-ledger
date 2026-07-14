@@ -27,6 +27,13 @@ export async function POST(req: Request) {
         email,
         name,
         password: hashedPassword,
+        notificationSettings: {
+          create: {
+            email,
+            notifyIncome: true,
+            notifyExpense: true,
+          }
+        }
       },
     });
 

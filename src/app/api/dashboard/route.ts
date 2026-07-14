@@ -89,6 +89,12 @@ export async function GET(req: Request) {
       take: 10,
     });
 
+    const userSettings = await prisma.notificationSettings.findUnique({
+      where: { userId },
+      select: { currency: true },
+    });
+    const currency = userSettings?.currency || "INR";
+
     return NextResponse.json({
       balance: fromCents(balanceCents),
       income: fromCents(incomeCents),
@@ -99,6 +105,7 @@ export async function GET(req: Request) {
       healthScore,
       insights,
       recentActivity,
+      currency,
     });
   } catch (error) {
     console.error("[DASHBOARD_GET]", error);
